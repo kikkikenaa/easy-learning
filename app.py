@@ -24,5 +24,5 @@ if uploaded_file is not None:
 
     # Generate summary
     st.write("Summary:")
-    summary = summarizer(text, max_length=130, min_length=30, do_sample=False)
+    summary = summarizer(text, max_length=1130, min_length=230, do_sample=False)
     st.write(summary[0]['summary_text'])

@@ -27,12 +27,21 @@ if uploaded_file is not None:
     # Generate summary using TF-IDF
     st.write("Summary:")
     try:
+        # Tokenize sentences
         sentences = sent_tokenize(text)
-        vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(sentences)
-        sentence_scores = tfidf_matrix.sum(axis=1)
-        top_sentences = [sentences[i] for i in sentence_scores.argsort(axis=0)[-3:]]
-        summary = " ".join(top_sentences)
-        st.write(summary)
+        
+        # Check if there are enough sentences to summarize
+        if len(sentences) < 3:
+            st.warning("The text is too short to generate a meaningful summary.")
+        else:
+            # Use TF-IDF to score sentences
+            vectorizer = TfidfVectorizer(stop_words='english')
+            tfidf_matrix = vectorizer.fit_transform(sentences)
+            sentence_scores = tfidf_matrix.sum(axis=1)
+            
+            # Get top 3 sentences with the highest scores
+            top_sentences = [sentences[i] for i in sentence_scores.argsort(axis=0)[-3:]]
+            summary = " ".join(top_sentences)
+            st.write(summary)
     except Exception as e:
         st.error(f"Error generating summary: {e}")

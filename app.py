@@ -13,20 +13,12 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-# Streamlit app
+# Streamlit app title
 st.title("Easy Learning - Analyze Notes and Exam Papers")
 
-# File uploaders
-st.sidebar.header("Upload Files")
-notes_files = st.sidebar.file_uploader("Upload your notes (PDF)", type="pdf", accept_multiple_files=True)
-exam_files = st.sidebar.file_uploader("Upload exam papers (PDF)", type="pdf", accept_multiple_files=True)
-
-# Debugging: Check if files are detected
-if notes_files:
-    st.success(f"{len(notes_files)} notes file(s) uploaded successfully!")
-
-if exam_files:
-    st.success(f"{len(exam_files)} exam paper(s) uploaded successfully!")
+# Retrieve uploaded files from session state
+notes_files = st.session_state.get("notes_files", [])
+exam_files = st.session_state.get("exam_files", [])
 
 # Function to extract text from PDFs
 def extract_text_from_pdf(files):
@@ -72,18 +64,18 @@ def analyze_exam_papers(text):
     most_common = word_freq.most_common(10)
     return most_common
 
-# Function to highlight important terms
+# Function to highlight important terms in notes
 def highlight_important_areas(notes_text, important_terms):
     highlighted_text = notes_text
     for term, _ in important_terms:
         highlighted_text = highlighted_text.replace(term, f"<b>{term}</b>")
     return highlighted_text
 
-# Process files if both are uploaded
+# Process uploaded files
 if notes_files and exam_files:
     st.write("Processing files...")
 
-    # Extract text
+    # Extract text from PDFs
     notes_text = extract_text_from_pdf(notes_files)
     exam_text = extract_text_from_pdf(exam_files)
 
@@ -105,9 +97,5 @@ if notes_files and exam_files:
     else:
         st.warning("No significant keywords detected in exam papers.")
 
-elif notes_files:
-    st.warning("Please upload exam papers to analyze frequently tested topics.")
-elif exam_files:
-    st.warning("Please upload notes to highlight important areas.")
-else:
-    st.info("Upload your notes and exam papers to get started.")
+elif not notes_files and not exam_files:
+    st.warning("Please upload your files in the Upload section first.")

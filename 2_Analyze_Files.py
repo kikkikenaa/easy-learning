@@ -9,7 +9,7 @@ from nltk.stem import WordNetLemmatizer
 from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer
 
-# Download NLTK data
+# Download necessary NLTK data
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -39,8 +39,7 @@ def preprocess_text(text):
     if not text:
         return ""
 
-    text = text.lower()
-    text = text.translate(str.maketrans('', '', string.punctuation))  # Remove punctuation
+    text = text.lower().translate(str.maketrans('', '', string.punctuation))  # Remove punctuation
     text = ''.join([char for char in text if not char.isdigit()])  # Remove numbers
 
     tokens = word_tokenize(text)
@@ -73,13 +72,12 @@ def extract_relevant_notes(notes_text, key_topics):
     relevant_sentences = []
     sentences = sent_tokenize(notes_text)
 
-    # Check if sentences in notes contain the most tested topics
     for sentence in sentences:
         for topic in key_topics:
             for term, _ in topic:
                 if term in sentence:
                     relevant_sentences.append(sentence)
-                    break  # Move to the next sentence after finding a match
+                    break
 
     return " ".join(relevant_sentences)
 
